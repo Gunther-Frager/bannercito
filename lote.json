@@ -1,0 +1,337 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "titulo": "1. DILATACION TEMPORAL",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| Cerca de un agujero negro o viajando a velocidades|",
+          "| cercanas a la luz, el tiempo transcurre mas lento. |",
+          "| Un segundo cerca del horizonte equivale a anos fuera|",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| La gravedad deforma el tejido del espacio-tiempo, |",
+          "| haciendo que los relojes vuelen mas despacio en la |",
+          "| superficie de la Tierra comparados con el espacio. |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "2. MICELIO Y REDES",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| Los hongos subterraneos conectan arboles lejanos, |",
+          "| compartiendo nutrientes y alertas de plagas por   |",
+          "| medio de una gigantesca red de fibra biologica.   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| El bosque actua como un superorganismo inteligente|",
+          "| donde la informacion quimica viaja silenciosa     |",
+          "| bajo nuestros pies a traves del micelio oculto.   |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "3. ENERGIA DE LAS ESTRELLAS",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| El Sol fusiona cada segundo millones de toneladas |",
+          "| de hidrogeno en helio, liberando una energia pura |",
+          "| que tardo miles de anos en salir desde su nucleo. |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| Cada foton de luz solar que choca contra tu piel  |",
+          "| nacio en el corazon estelar hace un monton de     |",
+          "| tiempo para terminar iluminando tu tarde de hoy.  |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "4. PAUSA COTIDIANA",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| No hay prisa que valga un colapso mental. Detenete|",
+          "| un instante, respira hondo y deja que el codigo   |",
+          "| corra solo por unos minutos en segundo plano.     |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| La atencion plena en pequenos detalles transforma |",
+          "| un dia pesado en un loop de calma y perspectiva.  |",
+          "| Todo sigue su curso, tomate tu respiro.           |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "5. ALERTA DE SISTEMA",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| [AVISO CRITICO] Levantate a tomar agua de una vez |",
+          "| o el teclado terminara absorbiendo lo que queda   |",
+          "| de tu alma biologica en este preciso ciclo.       |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| [DIAGNOSTICO] Postura detectada como encorvado.   |",
+          "| Estira la espalda, afloja los hombros y parpadea  |",
+          "| un par de veces frente a esta pantalla luminosa.  |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "6. ANIMACION FLUIDA",
+      "frameDelay": 120,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     * * * *                       |",
+          "|                   *         *                     |",
+          "|                  *     .     *                    |",
+          "|                   *         *                     |",
+          "|                     * * * *                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     . . . .                       |",
+          "|                   .    *    .                     |",
+          "|                  .   * * *   .                    |",
+          "|                   .    *    .                     |",
+          "|                     . . . .                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     o o o o                       |",
+          "|                   o    .    o                     |",
+          "|                  o   . * .   o                    |",
+          "|                   o    .    o                     |",
+          "|                     o o o o                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     O O O O                       |",
+          "|                   O    o    O                     |",
+          "|                  O   o . o   O                    |",
+          "|                   O    o    O                     |",
+          "|                     O O O O                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     # # # #                       |",
+          "|                   #    O    #                     |",
+          "|                  #   O o O   #                    |",
+          "|                   #    O    #                     |",
+          "|                     # # # #                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     # # # #                       |",
+          "|                   #    O    #                     |",
+          "|                  #   O o O   #                    |",
+          "|                   #    O    #                     |",
+          "|                     # # # #                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     O O O O                       |",
+          "|                   O    o    O                     |",
+          "|                  O   o . o   O                    |",
+          "|                   O    o    O                     |",
+          "|                     O O O O                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                     o o o o                       |",
+          "|                   o    .    o                     |",
+          "|                  o   . * .   o                    |",
+          "|                   o    .    o                     |",
+          "|                     o o o o                       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "7. MECANICA CUANTICA",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| El entrelazamiento cuantico permite que dos       |",
+          "| particulas compartan estado instantaneamente, sin |",
+          "| importar la distancia colosal que las separe.     |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| A nivel atomico, el universo es una probabilidad  |",
+          "| constante donde nada toma una forma definitiva    |",
+          "| hasta que alguien decide observarlo fijamente.    |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "8. FAUNA CURIOSA",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| Los cuervos poseen una memoria facial envidiable; |",
+          "| recuerdan rostros humanos durante anos y pueden   |",
+          "| transmitir rencores o favores a otras generaciones|",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| Los pulpos tienen tres corazones y su sangre es   |",
+          "| de tono azulado debido a que utilizan hemocianina |",
+          "| basada en cobre en lugar de hierro para el oxigeno|",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "9. FILOSOFIA DE TRABAJO",
+      "frameDelay": 5000,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "| Hacer las cosas bien y con elegancia requiere     |",
+          "| paciencia y tolerancia al error en cada iteracion.|",
+          "| Cada bug superado es un nivel mas de experiencia. |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "| El codigo limpio es como una buena conversacion:  |",
+          "| se entiende sin esfuerzo y deja espacio para      |",
+          "| disfrutar el proceso creativo sin fricciones.     |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    },
+    {
+      "titulo": "10. ONDA EXPANSIVA",
+      "frameDelay": 90,
+      "frames": [
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                                                   |",
+          "|                         ( )                       |",
+          "|                                                   |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                                                   |",
+          "|                       _______                     |",
+          "|                      (   .   )                    |",
+          "|                       _______                     |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                  _____________                    |",
+          "|                 |             |                   |",
+          "|                 |   (  :  )   |                   |",
+          "|                 |_____________|                   |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|              _______________________              |",
+          "|             |                       |             |",
+          "|             |      [   #   ]        |             |",
+          "|             |_______________________|             |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|          _________________________________        |",
+          "|         |                                 |       |",
+          "|         |           /===\\====\\            |       |",
+          "|         |_________________________________|       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|          _________________________________        |",
+          "|         |                                 |       |",
+          "|         |           \\====/====/            |       |",
+          "|         |_________________________________|       |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|              _______________________              |",
+          "|             |                       |             |",
+          "|             |      [   #   ]        |             |",
+          "|             |_______________________|             |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ],
+        [
+          "+---------------------------------------------------+",
+          "|                  _____________                    |",
+          "|                 |             |                   |",
+          "|                 |   (  :  )   |                   |",
+          "|                 |_____________|                   |",
+          "|                                                   |",
+          "+---------------------------------------------------+"
+        ]
+      ]
+    }
+  ]
+}

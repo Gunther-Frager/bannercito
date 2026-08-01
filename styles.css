@@ -1,0 +1,427 @@
+:root {
+    --opacity: 0.75;
+    --font-size-base: 11px;
+    --title-size: 14px;
+}
+
+/* Ocultar barras de desplazamiento globales */
+* {
+    scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   1. TEMA: Minimalismo Nórdico / "Zen Glass" (Default)
+   ========================================================= */
+.banner-container[data-theme="zen"] {
+    --bg-main: rgba(20, 20, 20, var(--opacity));
+    --border-main: rgba(255, 255, 255, 0.12);
+    --title-color: #61afef;
+    --text-color: #abb2bf;
+    --accent-color: #61afef;
+    --font-family-main: 'Fira Code', monospace;
+    --border-radius: 12px;
+    backdrop-filter: blur(12px);
+}
+
+/* =========================================================
+   2. TEMA: Terminal Retro-Hacker (CRT)
+   ========================================================= */
+.banner-container[data-theme="retro"] {
+    --bg-main: rgba(5, 15, 5, var(--opacity));
+    --border-main: rgba(51, 255, 51, 0.3);
+    --title-color: #33ff33;
+    --text-color: #2bda2b;
+    --accent-color: #33ff33;
+    --font-family-main: 'VT323', monospace;
+    --border-radius: 2px;
+    backdrop-filter: none;
+}
+
+/* =========================================================
+   3. TEMA 1: Neón Callejero / Cyber-Lo-Fi
+   ========================================================= */
+.banner-container[data-theme="neon"] {
+    --bg-main: rgba(15, 5, 25, var(--opacity));
+    --border-main: rgba(255, 0, 127, 0.5);
+    --title-color: #ff007f;
+    --text-color: #00f0ff;
+    --accent-color: #ff007f;
+    --font-family-main: 'Fira Code', monospace;
+    --border-radius: 8px;
+    backdrop-filter: blur(8px);
+    box-shadow: inset 0 0 15px rgba(255, 0, 127, 0.15);
+    animation: neonPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes neonPulse {
+    0% { border-color: rgba(255, 0, 127, 0.4); }
+    100% { border-color: rgba(0, 240, 255, 0.6); }
+}
+
+/* =========================================================
+   4. TEMA 2: Monocromo Orgánico / Estética E-Ink
+   ========================================================= */
+.banner-container[data-theme="eink"] {
+    --bg-main: rgba(244, 244, 242, var(--opacity));
+    --border-main: rgba(50, 50, 50, 0.3);
+    --title-color: #111111;
+    --text-color: #222222;
+    --accent-color: #444444;
+    --font-family-main: 'Fira Code', monospace;
+    --border-radius: 4px;
+    backdrop-filter: none;
+}
+
+/* =========================================================
+   5. TEMA 3: Cyberpunk Minimalista / HUD
+   ========================================================= */
+.banner-container[data-theme="hud"] {
+    --bg-main: rgba(0, 10, 20, var(--opacity));
+    --border-main: rgba(0, 255, 204, 0.4);
+    --title-color: #00ffcc;
+    --text-color: #88ffcc;
+    --accent-color: #00ffcc;
+    --font-family-main: 'Fira Code', monospace;
+    --border-radius: 0px;
+    backdrop-filter: blur(4px);
+    position: relative;
+}
+.banner-container[data-theme="hud"]::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 2px;
+    background: rgba(0, 255, 204, 0.6);
+    animation: hudScan 3s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes hudScan {
+    0% { top: 0%; opacity: 0.8; }
+    50% { opacity: 0.2; }
+    100% { top: 100%; opacity: 0.8; }
+}
+
+/* =========================================================
+   6. TEMA 4: Pixel Art Retro-Gaming
+   ========================================================= */
+.banner-container[data-theme="pixel"] {
+    --bg-main: rgba(30, 20, 50, var(--opacity));
+    --border-main: rgba(255, 204, 0, 0.6);
+    --title-color: #ffcc00;
+    --text-color: #ff99ff;
+    --accent-color: #ffcc00;
+    --font-family-main: 'VT323', monospace;
+    --border-radius: 0px;
+    image-rendering: pixelated;
+    backdrop-filter: none;
+}
+
+/* =========================================================
+   7. TEMA 5: Steampunk Industrial
+   ========================================================= */
+.banner-container[data-theme="steampunk"] {
+    --bg-main: rgba(35, 22, 12, var(--opacity));
+    --border-main: rgba(184, 115, 51, 0.5);
+    --title-color: #e5aa70;
+    --text-color: #c49a64;
+    --accent-color: #e5aa70;
+    --font-family-main: 'Fira Code', monospace;
+    --border-radius: 6px;
+    box-shadow: inset 0 0 10px rgba(139, 69, 19, 0.3);
+    backdrop-filter: none;
+}
+
+/* =========================================================
+   8. TEMA 6: Black & White (B&W)
+   ========================================================= */
+.banner-container[data-theme="bw"] {
+    --bg-main: rgba(230, 230, 230, var(--opacity));
+    --border-main: rgba(0, 0, 0, 0.25);
+    --title-color: #000000;
+    --text-color: #1a1a1a;
+    --accent-color: #000000;
+    --font-family-main: 'Fira Code', monospace;
+    --border-radius: 6px;
+    backdrop-filter: none;
+}
+
+/* Capa Scanline CRT solo activa en modo retro */
+.banner-container[data-theme="retro"] ~ .crt-overlay {
+    display: block;
+    position: absolute;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 99;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.crt-overlay {
+    display: none;
+}
+
+/* =========================================================
+   ESTRUCTURA Y COMPONENTES
+   ========================================================= */
+.banner-container {
+    width: 100%;
+    height: 100%;
+    background: var(--bg-main);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-main);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    position: relative;
+    -webkit-app-region: drag;
+    overflow: visible; /* Permite posicionamiento dinámico del menú sin recortar bordes */
+    font-family: var(--font-family-main);
+    transition: background 0.3s ease, border 0.3s ease;
+}
+
+.interactive {
+    -webkit-app-region: no-drag;
+}
+
+.content-box {
+    width: fit-content;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+
+.fade-in {
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
+
+h3 {
+    margin: 0 0 6px 0;
+    font-size: var(--title-size);
+    color: var(--title-color);
+    text-shadow: var(--text-glow, none);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-family: var(--font-family-main);
+    color: var(--text-color);
+    text-shadow: var(--text-glow, none);
+    line-height: 1.25;
+    white-space: pre;
+    width: fit-content;
+}
+
+.btn-group {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    z-index: 5;
+}
+
+.icon-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-main);
+    padding: 2px 5px;
+    font-size: 11px;
+    color: var(--text-color);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Panel de Ajustes */
+#settings-panel {
+    display: none;
+    position: absolute;
+    top: 36px;
+    right: 12px;
+    background: rgba(15, 15, 15, 0.96);
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-main);
+    font-size: 11px;
+    width: 230px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+    z-index: 100;
+    color: #ccc;
+    font-family: system-ui, -apple-system, sans-serif;
+    transform-origin: top right;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.theme-dropdown {
+    width: 100%;
+    background: #222;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 3px;
+    border-radius: 4px;
+    font-size: 10px;
+    outline: none;
+}
+
+.settings-grid-2cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.settings-grid-1col {
+    margin-bottom: 6px;
+}
+
+.settings-grid-2cols label, 
+.settings-grid-1col label {
+    font-size: 10px;
+    color: #ccc;
+}
+
+#settings-panel input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent-color);
+}
+
+.sliders-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 6px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.online-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.status-container {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    cursor: default;
+    padding: 2px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #e06c75;
+}
+
+.status-dot.online {
+    background-color: #98c379;
+}
+
+.update-btn {
+    background: #61afef;
+    border: none;
+    color: #1e1e1e;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 120%;
+    background: rgba(10, 10, 10, 0.98);
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 10px;
+    line-height: 1.4;
+    white-space: nowrap;
+    z-index: 99999;
+}
+
+.status-container:hover .tooltip {
+    display: block;
+}
+
+.font-control-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.font-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.font-btn:hover {
+    background: var(--accent-color);
+    color: #1e1e1e;
+}
+
+.font-display {
+    font-size: 10px;
+    color: #fff;
+    font-weight: 600;
+}

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Bannercito</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=VT323&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .reset-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #aaa;
+            font-size: 11px;
+            font-weight: bold;
+            font-family: inherit;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+        .reset-btn:hover {
+            color: #ff5555;
+            border-color: #ff5555;
+            background: rgba(255, 85, 85, 0.1);
+        }
+        .reset-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="crt-overlay"></div>
+
+    <div class="banner-container" id="container">
+        <div class="btn-group interactive" id="btn-group">
+            <button class="icon-btn" id="gear-btn" title="Configurar">⚙</button>
+            <button class="icon-btn" id="close-btn" title="Cerrar">✕</button>
+        </div>
+
+        <div class="content-box" id="content-box">
+            <h3 id="title-text">Cargando...</h3>
+            <p id="body-text">...</p>
+        </div>
+
+        <div id="settings-panel" class="interactive">
+            <div class="settings-grid-2cols">
+                <div class="online-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="online-check"> Online
+                    </label>
+                    <div class="status-container" id="status-box">
+                        <div class="status-dot" id="status-dot"></div>
+                        <div class="tooltip" id="tooltip-text">
+                            Última sincro:<br>Nunca<br>Lote Nº: 0001
+                        </div>
+                    </div>
+                </div>
+                <button class="update-btn" id="update-btn">Update</button>
+            </div>
+
+            <div class="settings-grid-2cols reset-row">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="ontop-check"> On top
+                </label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button class="reset-btn" id="reset-btn" title="RESET: borrar config local">R</button>
+                    <select id="theme-select" class="theme-dropdown" title="Tema Visual">
+                        <option value="zen">Zen Glass (Default)</option>
+                        <option value="retro">Terminal CRT</option>
+                        <option value="neon">Neón Callejero</option>
+                        <option value="eink">E-Ink (Tinta Electrónica)</option>
+                        <option value="hud">Cyberpunk HUD</option>
+                        <option value="pixel">Pixel Art Retro</option>
+                        <option value="steampunk">Steampunk Industrial</option>
+                        <option value="bw">Black & White (B&W)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-grid-2cols">
+                <div>
+                    <label>Opac <span id="opacity-val">0.75</span></label>
+                    <input type="range" id="opacity-range" min="0.1" max="1.0" step="0.05">
+                </div>
+                <label class="checkbox-label" style="align-self: flex-end; padding-bottom: 4px;">
+                    <input type="checkbox" id="clickthrough-check"> ClickThrough
+                </label>
+            </div>
+
+            <div class="settings-grid-2cols sliders-row">
+                <div>
+                    <label>Font Size</label>
+                    <div class="font-control-group">
+                        <button class="font-btn" id="font-minus-btn">-</button>
+                        <span class="font-display" id="font-val">16px</span>
+                        <button class="font-btn" id="font-plus-btn">+</button>
+                    </div>
+                </div>
+                <div>
+                    <label>Brillo <span id="glow-val">1</span></label>
+                    <input type="range" id="glow-range" min="0" max="10" step="1" value="1">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const debugModule = require('./debug');
+        const IS_DEBUG = debugModule.isDebugEnabled();
+        const renderStartTime = performance.now();
+
+        if (IS_DEBUG) console.log(`[RENDERER DEBUG +0.00ms] Script index.html iniciado`);
+
+        const { ipcRenderer } = require('electron');
+
+        const LOTE_STANDBY_DEFAULT = {
+            version: 1,
+            items: [{
+                titulo: "SYSTEM // ONLINE_READY",
+                texto: [
+                    "+---------------------------------------------------+",
+                    "| STATUS: MODO LOCAL / STANDBY                      |",
+                    "| L01: Operando con configuracion base local.       |",
+                    "| L02: Presiona [⚙] para configurar sincronizacion. |",
+                    "+---------------------------------------------------+"
+                ]
+            }]
+        };
+
+        let config = {};
+
+        const container = document.getElementById('container');
+        const contentBox = document.getElementById('content-box');
+        const titleEl = document.getElementById('title-text');
+        const bodyEl = document.getElementById('body-text');
+        const opacityRange = document.getElementById('opacity-range');
+        const opacityVal = document.getElementById('opacity-val');
+        const fontVal = document.getElementById('font-val');
+        const fontMinusBtn = document.getElementById('font-minus-btn');
+        const fontPlusBtn = document.getElementById('font-plus-btn');
+        const glowRange = document.getElementById('glow-range');
+        const glowVal = document.getElementById('glow-val');
+        const themeSelect = document.getElementById('theme-select');
+        const settingsPanel = document.getElementById('settings-panel');
+        const ontopCheck = document.getElementById('ontop-check');
+        const clickthroughCheck = document.getElementById('clickthrough-check');
+        const onlineCheck = document.getElementById('online-check');
+        const statusDot = document.getElementById('status-dot');
+        const tooltipText = document.getElementById('tooltip-text');
+        const updateBtn = document.getElementById('update-btn');
+        const gearBtn = document.getElementById('gear-btn');
+        const btnGroup = document.getElementById('btn-group');
+        const resetBtn = document.getElementById('reset-btn');
+
+        let currentIndex = 0;
+        let syncIntervalId = null;
+        let frameAnimId = null;
+
+        const CONFIG_DISENO = {
+            paddingHorizontalTotal: 24,
+            paddingVerticalTotal: 20,
+            minAnchoVentana: 245,
+            minAltoVentana: 110
+        };
+
+        function reposicionarCursorEnBoton(btnElement) {
+            if (!btnElement) return;
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const rect = btnElement.getBoundingClientRect();
+                    const localX = rect.left + rect.width / 2;
+                    const localY = rect.top + rect.height / 2;
+                    ipcRenderer.send('reposicionar-cursor-elemento', { localX, localY });
+                }, 30);
+            });
+        }
+
+        function actualizarEscalaMenuConfig() {
+            if (!settingsPanel) return;
+
+            if (config.showSettings) {
+                settingsPanel.style.display = 'block';
+                if (config.fontSize < 18) {
+                    let escala = 0.70 + ((config.fontSize - 11) / (18 - 11)) * 0.30;
+                    escala = Math.max(0.70, Math.min(1.0, escala));
+                    settingsPanel.style.transform = `scale(${escala})`;
+                    settingsPanel.style.transformOrigin = 'top left';
+                } else {
+                    settingsPanel.style.transform = 'scale(1)';
+                    settingsPanel.style.transformOrigin = 'top left';
+                }
+            } else {
+                settingsPanel.style.display = 'none';
+            }
+        }
+
+        function aplicarCambioFuente(nuevoSize) {
+            const fontSize = Math.max(11, Math.min(32, nuevoSize));
+            
+            fontVal.textContent = fontSize + "px";
+            document.documentElement.style.setProperty('--font-size-base', fontSize + 'px');
+            
+            const titleSize = fontSize + 3;
+            document.documentElement.style.setProperty('--title-size', titleSize + 'px');
+            
+            config.fontSize = fontSize;
+
+            if (container) container.style.height = 'auto';
+
+            if (container && contentBox && bodyEl) {
+                const anchoTexto = bodyEl.getBoundingClientRect().width;
+                let anchoPx = Math.max(
+                    CONFIG_DISENO.minAnchoVentana, 
+                    Math.ceil(anchoTexto) + CONFIG_DISENO.paddingHorizontalTotal
+                );
+
+                const altoTexto = bodyEl.getBoundingClientRect().height;
+                const altoTitulo = titleEl ? titleEl.getBoundingClientRect().height : (titleSize + 6);
+                const margenTitulo = 6; 
+                const paddingVerticalFijo = CONFIG_DISENO.paddingVerticalTotal;
+
+                let altoCalculado = altoTitulo + margenTitulo + altoTexto + paddingVerticalFijo;
+                
+                if (config.showSettings) {
+                    const altoMenuConfig = 220;
+                    altoCalculado = Math.max(altoCalculado, altoMenuConfig);
+                    anchoPx = Math.max(anchoPx, 260);
+                }
+
+                const altoPx = Math.max(
+                    CONFIG_DISENO.minAltoVentana, 
+                    Math.ceil(altoCalculado)
+                );
+
+                container.style.height = altoPx + 'px';
+                actualizarEscalaMenuConfig();
+
+                ipcRenderer.send('ajustar-tamanio-estandar', { anchoPx, altoPx });
+            }
+
+            ipcRenderer.send('guardar-config', config);
+        }
+
+        function aplicarGlowSegunNivel(nivel, tema) {
+            let glowCSS = "none";
+            const numNivel = parseInt(nivel, 10);
+            
+            if (numNivel > 0) {
+                const intensidadAlpha = Math.min(numNivel * 0.1, 1.0);
+                const radioBlur = numNivel * 1.5;
+                if (tema === "retro") glowCSS = `0 0 ${radioBlur}px rgba(51, 255, 51, ${intensidadAlpha})`;
+                else if (tema === "neon") glowCSS = `0 0 ${radioBlur}px rgba(255, 0, 127, ${intensidadAlpha})`;
+                else if (tema === "hud") glowCSS = `0 0 ${radioBlur}px rgba(0, 255, 204, ${intensidadAlpha})`;
+                else glowCSS = `0 0 ${radioBlur}px rgba(97, 175, 239, ${intensidadAlpha})`;
+            }
+            
+            document.documentElement.style.setProperty('--text-glow', glowCSS);
+            config.brilloLetras = glowCSS;
+        }
+
+        function aplicarEstilosUI() {
+            const tema = config.tema || 'zen';
+            container.setAttribute('data-theme', tema);
+            themeSelect.value = tema;
+
+            const opacidad = config.opacidad !== undefined ? config.opacidad : 0.75;
+            document.documentElement.style.setProperty('--opacity', opacidad);
+            opacityRange.value = opacidad;
+            opacityVal.textContent = opacidad;
+            
+            const fontSize = parseInt(config.fontSize || 16, 10);
+            fontVal.textContent = fontSize + "px";
+            document.documentElement.style.setProperty('--font-size-base', fontSize + 'px');
+            document.documentElement.style.setProperty('--title-size', (fontSize + 2) + 'px');
+
+            let nivelGlow = "1";
+            if (config.brilloLetras === "none" || !config.brilloLetras) {
+                nivelGlow = "0";
+            } else {
+                const match = config.brilloLetras.match(/([\d.]+)px/);
+                if (match) {
+                    const blurVal = parseFloat(match[1]);
+                    nivelGlow = Math.max(0, Math.min(10, Math.round(blurVal / 1.5))).toString();
+                }
+            }
+            
+            glowRange.value = nivelGlow;
+            glowVal.textContent = nivelGlow;
+            aplicarGlowSegunNivel(nivelGlow, tema);
+
+            ontopCheck.checked = !!config.alwaysOnTop;
+            clickthroughCheck.checked = !!config.clickThrough;
+            
+            onlineCheck.checked = !!config.onlineEnabled;
+
+            ipcRenderer.send('set-ignore-mouse-events', !!config.clickThrough);
+            
+            if (config.onlineEnabled && config.urlLoteRemoto) {
+                toggleOnlineSync(true);
+            } else {
+                actualizarTooltipUI(false);
+            }
+            
+            aplicarCambioFuente(fontSize);
+            actualizarEscalaMenuConfig();
+        }
+
+        function actualizarTooltipUI(isOnline, fechaStr = config.ultimaSincronizacion || "Nunca") {
+            if (isOnline) statusDot.classList.add('online');
+            else statusDot.classList.remove('online');
+            
+            const loteActual = getLoteActivo();
+            const versionNum = loteActual && loteActual.version !== undefined ? loteActual.version : 0;
+            const versionLote = String(versionNum).padStart(4, '0');
+            const fechaMostrada = fechaStr || "Nunca";
+            
+            tooltipText.innerHTML = `Última sincro:<br>${fechaMostrada}<br>Lote Nº: ${versionLote}`;
+        }
+
+        function getLoteActivo() {
+            if (config.onlineEnabled && config.lote && Array.isArray(config.lote.items) && config.lote.items.length > 0) {
+                return config.lote;
+            }
+            if (config.loteAnterior && Array.isArray(config.loteAnterior.items) && config.loteAnterior.items.length > 0) {
+                return config.loteAnterior;
+            }
+            return LOTE_STANDBY_DEFAULT;
+        }
+
+        function renderItemActual() {
+            if (frameAnimId) clearInterval(frameAnimId);
+
+            const loteActivo = getLoteActivo();
+
+            if (currentIndex >= loteActivo.items.length) currentIndex = 0;
+            const item = loteActivo.items[currentIndex] || {};
+            
+            contentBox.classList.remove('fade-in');
+            void contentBox.offsetWidth;
+            contentBox.classList.add('fade-in');
+
+            titleEl.textContent = item.titulo || "Bannercito";
+            
+            if (Array.isArray(item.frames) && item.frames.length > 0) {
+                let frameIdx = 0;
+                bodyEl.textContent = Array.isArray(item.frames[0]) ? item.frames[0].join('\n') : item.frames[0];
+                
+                frameAnimId = setInterval(() => {
+                    frameIdx = (frameIdx + 1) % item.frames.length;
+                    const currentFrame = item.frames[frameIdx];
+                    bodyEl.textContent = Array.isArray(currentFrame) ? currentFrame.join('\n') : currentFrame;
+                }, item.frameDelay || 300);
+            } else if (Array.isArray(item.texto)) {
+                bodyEl.textContent = item.texto.join('\n');
+            } else {
+                bodyEl.textContent = item.texto || "";
+            }
+
+            aplicarCambioFuente(config.fontSize);
+        }
+
+        function iniciarRotacion() {
+            renderItemActual();
+            setInterval(() => {
+                const itemsCount = getLoteActivo().items?.length || 0;
+                if (itemsCount > 0) {
+                    currentIndex = (currentIndex + 1) % itemsCount;
+                    renderItemActual();
+                }
+            }, 10000);
+        }
+
+        async function sincronizarRemoto() {
+            if (!config.urlLoteRemoto || !config.onlineEnabled || !navigator.onLine) {
+                actualizarTooltipUI(false);
+                renderItemActual();
+                return false;
+            }
+
+            try {
+                if (IS_DEBUG) console.log(`[SYNC] Solicitando lote remoto via IPC: ${config.urlLoteRemoto}`);
+                
+                const res = await ipcRenderer.invoke('sincronizar-remoto-ipc', config.urlLoteRemoto);
+                if (res && res.ok && res.data) {
+                    const dataRemota = res.data;
+                    
+                    if (!dataRemota || !Array.isArray(dataRemota.items)) {
+                        throw new Error("Formato de JSON remoto invalido");
+                    }
+
+                    const ahora = new Date();
+                    const fechaFormateada = ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + '  ' + ahora.toLocaleDateString();
+                    
+                    config.lote = dataRemota;
+                    config.loteAnterior = dataRemota;
+                    config.ultimaSincronizacion = fechaFormateada;
+                    currentIndex = 0;
+
+                    ipcRenderer.send('guardar-config', config);
+                    actualizarTooltipUI(true, fechaFormateada);
+                    renderItemActual();
+                    return true;
+                } else {
+                    if (IS_DEBUG) console.warn(`[SYNC] Respuesta HTTP/IPC fallida o rechazada:`, res);
+                    actualizarTooltipUI(false);
+                    renderItemActual();
+                    return false;
+                }
+            } catch (err) {
+                if (IS_DEBUG) console.error(`[SYNC] Error durante la peticion sync:`, err);
+                actualizarTooltipUI(false);
+                renderItemActual();
+                return false;
+            }
+        }
+
+        function toggleOnlineSync(activar) {
+            if (syncIntervalId) {
+                clearInterval(syncIntervalId);
+                syncIntervalId = null;
+            }
+            if (activar && config.urlLoteRemoto) {
+                sincronizarRemoto();
+                syncIntervalId = setInterval(sincronizarRemoto, 1000 * 60 * 60);
+            } else {
+                actualizarTooltipUI(false);
+                renderItemActual();
+            }
+        }
+
+        async function init() {
+            const ipcStart = performance.now();
+            if (IS_DEBUG) console.log(`[RENDERER DEBUG +0.00ms] Invocando IPC obtener-config-inicial-async...`);
+            
+            config = await ipcRenderer.invoke('obtener-config-inicial-async') || {};
+            
+            const ipcEnd = performance.now();
+            if (IS_DEBUG) console.log(`[RENDERER DEBUG +${(ipcEnd - renderStartTime).toFixed(2)}ms] IPC obtenido en ${(ipcEnd - ipcStart).toFixed(2)}ms`);
+
+            aplicarEstilosUI();
+            iniciarRotacion();
+
+            if (IS_DEBUG) console.log(`[RENDERER DEBUG +${(performance.now() - renderStartTime).toFixed(2)}ms] Renderizador inicializado por completo`);
+        }
+
+        init();
+
+        // LISTENERS
+        document.getElementById('close-btn').addEventListener('click', () => ipcRenderer.send('cerrar-app'));
+
+        gearBtn.addEventListener('click', (e) => {
+            config.showSettings = !config.showSettings;
+            e.stopPropagation();
+            actualizarEscalaMenuConfig();
+            aplicarCambioFuente(config.fontSize);
+        });
+
+        [btnGroup, settingsPanel].forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                if (config.clickThrough) ipcRenderer.send('set-ignore-mouse-events', false);
+            });
+            el.addEventListener('mouseleave', () => {
+                if (config.clickThrough && (!config.showSettings || el === settingsPanel)) {
+                    ipcRenderer.send('set-ignore-mouse-events', true);
+                }
+            });
+        });
+
+        settingsPanel.addEventListener('click', (e) => e.stopPropagation());
+
+        resetBtn.addEventListener('click', async () => {
+            config = await ipcRenderer.invoke('reset-config');
+            aplicarEstilosUI();
+            renderItemActual();
+        });
+
+        updateBtn.addEventListener('click', async () => {
+            if (!config.onlineEnabled || !config.urlLoteRemoto) return;
+            updateBtn.textContent = "...";
+            await sincronizarRemoto();
+            updateBtn.textContent = "Update";
+        });
+
+        themeSelect.addEventListener('change', (e) => {
+            config.tema = e.target.value;
+            container.setAttribute('data-theme', config.tema);
+            aplicarGlowSegunNivel(glowRange.value, config.tema);
+            ipcRenderer.send('guardar-config', config);
+            aplicarCambioFuente(config.fontSize);
+        });
+
+        opacityRange.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            config.opacidad = val;
+            document.documentElement.style.setProperty('--opacity', val);
+            opacityVal.textContent = val;
+            ipcRenderer.send('guardar-config', config);
+        });
+
+        fontMinusBtn.addEventListener('click', () => {
+            const actual = parseInt(config.fontSize || 16, 10);
+            aplicarCambioFuente(actual - 1);
+            reposicionarCursorEnBoton(fontMinusBtn);
+        });
+
+        fontPlusBtn.addEventListener('click', () => {
+            const actual = parseInt(config.fontSize || 16, 10);
+            aplicarCambioFuente(actual + 1);
+            reposicionarCursorEnBoton(fontPlusBtn);
+        });
+
+        glowRange.addEventListener('input', (e) => {
+            const val = e.target.value;
+            glowVal.textContent = val;
+            aplicarGlowSegunNivel(val, config.tema || 'zen');
+            ipcRenderer.send('guardar-config', config);
+        });
+
+        ontopCheck.addEventListener('change', (e) => {
+            config.alwaysOnTop = e.target.checked;
+            ipcRenderer.send('guardar-config', config);
+        });
+
+        clickthroughCheck.addEventListener('change', (e) => {
+            config.clickThrough = e.target.checked;
+            ipcRenderer.send('guardar-config', config);
+            ipcRenderer.send('set-ignore-mouse-events', config.clickThrough);
+        });
+
+        onlineCheck.addEventListener('change', (e) => {
+            config.onlineEnabled = e.target.checked;
+            ipcRenderer.send('guardar-config', config);
+            toggleOnlineSync(config.onlineEnabled);
+        });
+    </script>
+</body>
+</html>
