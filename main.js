@@ -13,32 +13,32 @@ const fs = require('fs');
 // Configura aquí la URL remota fija por defecto
 const DEFAULT_CONFIG_REMOTO_URL = "https://raw.githubusercontent.com/Gunther-Frager/bannercito-data/main/lote.json"; 
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', (err) => { // Captura errores no controlados para evitar que la app se cierre inesperadamente
     debug.log('FATAL', `Excepción no controlada: ${err.message}`, { stack: err.stack });
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', (reason) => { // Captura promesas rechazadas no controladas para evitar que la app se cierre inesperadamente
     debug.log('FATAL', 'Promesa rechazada no controlada:', { reason });
 });
 
-app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
+app.commandLine.appendSwitch('disable-gpu-shader-disk-cache'); // Desactiva el cache de shaders en disco para evitar problemas de GPU en algunos sistemas
 
-function getConfigPath() {
+function getConfigPath() { // Determina la ruta del archivo de configuración config.json
     if (!app.isPackaged) {
-        const localPath = path.join(__dirname, 'config.json');
+        const localPath = path.join(__dirname, 'config.json'); // Ruta de configuración en modo desarrollo
         if (fs.existsSync(localPath)) {
             debug.log('CONFIG', 'Usando config.json local de desarrollo');
             return localPath;
         }
     }
-    const userDataPath = path.join(app.getPath('userData'), 'config.json');
+    const userDataPath = path.join(app.getPath('userData'), 'config.json'); // Ruta de configuración en modo producción
     debug.log('CONFIG', 'Usando config.json en userData:', { path: userDataPath });
     return userDataPath;
 }
 
 const configPath = getConfigPath();
 
-const LOTE_DEFAULT = {
+const LOTE_DEFAULT = { //   Estructura de lote por defecto en caso de no existir config.json o estar corrupto
     version: 1,
     items: [
         {
@@ -54,7 +54,7 @@ const LOTE_DEFAULT = {
     ]
 };
 
-function getBaseConfig() {
+function getBaseConfig() { // Devuelve la configuración base por defecto en caso de no existir config.json o estar corrupto
     return {
         tema: "zen", 
         fontSize: 16,
@@ -87,7 +87,7 @@ async function cargarConfiguracionInicialAsync() {
         if (!config.urlLoteRemoto || config.urlLoteRemoto.trim() === "") {
             config.urlLoteRemoto = DEFAULT_CONFIG_REMOTO_URL;
         }
-
+        // Validación de lote: Si no existe o está vacío, se restaura desde loteAnterior o se asigna el LOTE_DEFAULT
         if (!config.lote || !Array.isArray(config.lote.items) || config.lote.items.length === 0) {
             config.lote = (config.loteAnterior && Array.isArray(config.loteAnterior.items) && config.loteAnterior.items.length > 0)
                 ? config.loteAnterior
@@ -108,7 +108,7 @@ async function cargarConfiguracionInicialAsync() {
 }
 
 let saveTimeout = null;
-function guardarConfiguracionDiscoDebounced() {
+function guardarConfiguracionDiscoDebounced() { //  Guarda la configuración en disco con debounce para evitar escrituras frecuentes
     if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = setTimeout(async () => {
         try {
@@ -121,9 +121,9 @@ function guardarConfiguracionDiscoDebounced() {
     }, 300);
 }
 
-const MARGEN_SNAP = 25;
+const MARGEN_SNAP = 25; // Margen en píxeles para el anclaje automático a los bordes de la pantalla
 
-function aplicarAnclajeBordes(win) {
+function aplicarAnclajeBordes(win) { // Aplica el anclaje automático a los bordes de la pantalla si la ventana está cerca de ellos
     if (!win || win.isDestroyed()) return;
 
     const [winX, winY] = win.getPosition();
@@ -149,7 +149,7 @@ function aplicarAnclajeBordes(win) {
     }
 }
 
-function createWindow() {
+function createWindow() { // Crea la ventana principal de la aplicación con las configuraciones actuales
     debug.log('UI', 'Creando BrowserWindow...');
 
     if (config.posicionX === undefined || config.posicionY === undefined) {
@@ -218,7 +218,7 @@ function createWindow() {
     });
 }
 
-app.whenReady().then(async () => {
+app.whenReady().then(async () => { // Espera a que Electron esté listo antes de cargar la configuración y crear la ventana principal
     debug.log('LIFECYCLE', 'app.whenReady() resuelto.');
     await cargarConfiguracionInicialAsync();
     createWindow();
@@ -243,7 +243,7 @@ ipcMain.handle('sincronizar-remoto-ipc', async (event, url) => {
     return new Promise((resolve) => {
         let isResolved = false;
         
-        const safeResolve = (data) => {
+        const safeResolve = (data) => { // Garantiza que la promesa se resuelva solo una vez, evitando múltiples resoluciones en caso de timeout o error
             if (!isResolved) {
                 isResolved = true;
                 resolve(data);
@@ -313,7 +313,7 @@ ipcMain.on('guardar-config', (event, nuevaConfig) => {
     guardarConfiguracionDiscoDebounced();
 });
 
-ipcMain.handle('reset-config', async () => {
+ipcMain.handle('reset-config', async () => { // Resetea la configuración a los valores por defecto y elimina config.json si existe
     debug.log('CONFIG', 'Iniciando reseteo de configuracion...');
     try {
         if (fs.existsSync(configPath)) {
@@ -327,6 +327,7 @@ ipcMain.handle('reset-config', async () => {
     return config;
 });
 
+// IPC para ajustar el tamaño de la ventana a los valores estándar proporcionados, respetando los límites mínimos
 ipcMain.on('ajustar-tamanio-estandar', (event, { anchoPx, altoPx }) => {
     const win = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
     if (win && !win.isDestroyed()) {
@@ -365,6 +366,7 @@ ipcMain.on('ajustar-tamanio-estandar', (event, { anchoPx, altoPx }) => {
     }
 });
 
+// IPC para reposicionar el cursor del mouse a coordenadas locales dentro de la ventana principal, convirtiéndolas a coordenadas globales de pantalla
 ipcMain.on('reposicionar-cursor-elemento', (event, { localX, localY }) => {
     const win = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
     if (win && !win.isDestroyed()) {
@@ -375,6 +377,7 @@ ipcMain.on('reposicionar-cursor-elemento', (event, { localX, localY }) => {
     }
 });
 
+//  IPC para habilitar o deshabilitar el click-through (ignorar eventos de mouse) en la ventana principal
 ipcMain.on('set-ignore-mouse-events', (event, ignore) => {
     const win = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
     if (win && !win.isDestroyed()) {
